@@ -1,0 +1,10 @@
+a) La diferencia entre un grafo y un arbol es que el arbol es un grafo asiclico y conexo en el que un nodo se ha designado como raiz.
+b) 
+    i) Vértices: países. Aristas: es limítrofe. 
+        Este grafo es no dirigido, ya que la relacion sobre los vertices es simetrica.
+    ii) Vértices: países. Aristas: principales mercados de exportación. 
+    iii) Vértices: dispositivos en una red de computadoras. Aristas: conectividad. 
+        Este grafo es no dirigido ya que la relacion entre los dispositivos
+    iv) Vértices: variables de un programa. Aristas: relación “usa”. (Decimos que la variable x usa la variable y, si y aparece del lado derecho de una expresión y x aparece del
+    lado izquierdo, por ejemplo x = y). 
+        Grafo dirigido ya que la relacion no es simetrica, porque en ese caso x usa y, pero y no usa x.

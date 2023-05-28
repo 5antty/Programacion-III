@@ -13,7 +13,7 @@ public class Empresa {
 		ListaGenerica<Integer> aux = new ListaGenericaEnlazada<Integer>();
 		cola.encolar(this.empleados);
 		cola.encolar(null);
-		int nivel = 0;
+		// int nivel = 0;
 
 		// int max=1;
 		while (!cola.esVacia()) {
@@ -30,7 +30,7 @@ public class Empresa {
 					aux.agregarFinal(cantNodos);
 				}
 			} else if (!cola.esVacia()) {
-				nivel++;
+				// nivel++;
 				cola.encolar(null);
 			}
 		}

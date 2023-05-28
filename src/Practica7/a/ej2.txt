@@ -1,0 +1,13 @@
+a) En un grafo no dirigido de n vértices, ¿Cuál es el número de aristas que puede tener? Fundamentar.
+    El numero de aristas que se puede tener en un grafo de n vertices es <= n*(n-1)/2
+
+    i. ¿Cuál es el mínimo número de aristas que puede tener se exige que el grafo sea conexo?
+        El minimo numero de aristas que puede tener un grafo conexo es mayor o igual a la cantidad de nodos menos uno, es decir e>=n-1
+    ii. ¿Cuál es el máximo número de aristas que puede tener si se exige que el grafo sea acíclico?
+        El maximo numero de aristas que se puede tener en un grafo aciclico de n vertices es <= n*(n-1)/2
+    iii. ¿Cuál es el número de aristas que puede tener si se exige que el grafo sea conexo y acíclico?
+        El número máximo de aristas en un grafo no dirigido conexo y acíclico es "n-1", ya que hay exactamente una ruta única entre cada par de vértices. 
+    iv. ¿Cuál es el mínimo número de aristas que puede tener si se exige que el grafo sea completo? (Un grafo es completo si hay una arista entre cada par de vértices.)
+        El mínimo número de aristas en un grafo completo con "n" vértices es (n * (n - 1)) / 2.
+b. En un grafo dirigido y que no tiene aristas que vayan de un nodo a sí mismo, ¿Cuál es el mayor número de aristas que puede tener? Fundamentar.
+    El máximo número de aristas en un grafo dirigido sin aristas que vayan de un nodo a sí mismo es "n * (n-1)", ya que para obtener el máximo número de aristas en un grafo dirigido sin bucles, se debe multiplicar "n" por "n-1" y considerar que cada una de estas aristas puede ser única en su dirección.

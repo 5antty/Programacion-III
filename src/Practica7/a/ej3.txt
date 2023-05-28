@@ -1,0 +1,5 @@
+a) Bajo qué condiciones usaría una Matriz de Adyacencias en lugar de una Lista de Adyacencias para representar un grafo. Y una Lista de Adyacencias en lugar de una Matriz de Adyacencias. Fundamentar.
+    La representacion que usaria dependeria de la densidad del grafo, es decir, en base a cuantas aristas tengo por vertice, si el grafo es muy denso, utilizaria una matriz de adyacencia ya que estaria justificada la memoria que utilizaria para esta representacion.
+    Mientras que la lista de adyacencias la usaria cuando tenga un grafo poco denso, ya que seria 
+b) ¿En función de qué parámetros resulta apropiado realizar la estimación del orden de ejecución para algoritmos sobre grafos densos? ¿Y para algoritmos sobre grafos dispersos? Fundamentar.
+c) Si representamos un grafo no dirigido usando una Matriz de Adyacencias, ¿cómo sería la matriz resultante? Fundamentar.
