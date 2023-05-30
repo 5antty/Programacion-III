@@ -17,11 +17,12 @@ public class ExplicacionParametros {
 		return suma;
 	}
 
-	public static void sumaArreglos2(int[] arreglo, int resultado) {
+	public static int sumaArreglos2(int[] arreglo, int resultado) {
 		int suma = 0;
 		for (int i : arreglo) {
 			suma += i;
 		}
+		return suma;
 	}
 
 	public static void main(String[] args) {
