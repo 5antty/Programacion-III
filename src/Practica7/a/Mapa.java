@@ -10,25 +10,24 @@ public class Mapa {
         mapaCiudades = new GrafoImplListAdy<String>();
     }
 
-	public Grafo<String> getMapaCiudades() {
-		return mapaCiudades;
-	}
+    public Grafo<String> getMapaCiudades() {
+        return mapaCiudades;
+    }
 
-	public void setMapaCiudades(Grafo<String> mapaCiudades) {
-		this.mapaCiudades = mapaCiudades;
-	}
-    
-    public ListaGenericaEnlazada<String> devolverCamino(String city1, String city2) {
+    public void setMapaCiudades(Grafo<String> mapaCiudades) {
+        this.mapaCiudades = mapaCiudades;
+    }
+
+    /*public ListaGenerica<String> devolverCamino(String city1, String city2) {
         ListaGenericaEnlazada<String> res = new ListaGenericaEnlazada<String>();
-        Grafo<String> aux = this.getMapaCiudades();
-        boolean[] marca = new boolean[aux.listaDeVertices().tamanio()];
+        boolean[] marca = new boolean[this.getMapaCiudades().listaDeVertices().tamanio()];
 
         ListaGenerica<Vertice<String>> lis = new ListaGenericaEnlazada<Vertice<String>>();
         ListaGenerica<Arista<String>> ady = null;
         Cola<Vertice<String>> q = new Cola<Vertice<String>>();
 
         // implementar el while hasta que el dato del vertice sea la city1
-        ListaGenerica<Vertice<String>> aux1 = aux.listaDeVertices();
+        ListaGenerica<Vertice<String>> aux1 = this.getMapaCiudades().listaDeVertices();
         aux1.comenzar();
         Vertice<String> aux2 = aux1.proximo();
         while (!aux1.fin() && !(aux2.dato().equals(city1))) {
@@ -37,7 +36,7 @@ public class Mapa {
 
         q.encolar(aux2);
         marca[aux2.posicion()] = true;
-        
+
         while (!q.esVacia()) {
             Vertice<String> cityActual = q.desencolar();
             // Agrego la ciudad a la lista de ciudades
@@ -58,7 +57,7 @@ public class Mapa {
                 }
             }
         }
-        
+
         lis.comenzar();
         Vertice<String> cityAct;
         while (!lis.fin()) {
@@ -68,5 +67,32 @@ public class Mapa {
 
         // T(n) de un alg de un grafo se anota O(|V|+|E|)
         return res;
+    }*/
+    
+    public ListaGenerica<String> devolverCamino(String city1, String city2){
+    	ListaGenericaEnlazada<String> res = new ListaGenericaEnlazada<String>();
+    	boolean[] marca = new boolean[this.getMapaCiudades().listaDeVertices().tamanio()];
+    	ListaGenerica<Vertice<String>> aux1 = this.getMapaCiudades().listaDeVertices();
+        aux1.comenzar();
+        Vertice<String> aux2 = aux1.proximo();
+        while (!aux1.fin() && !(aux2.dato().equals(city1))) {
+            aux2 = aux1.proximo();
+        }
+        return res;
+    }
+    
+
+    public ListaGenerica<String> devolverCaminoExceptuando(String city1, String city2, ListaGenerica<String> cities) {
+        ListaGenerica<String> res = new ListaGenericaEnlazada<String>();
+        ListaGenerica<String> camino = this.devolverCamino(city1, city2);
+
+        for (int i = 0; i < camino.tamanio(); i++) {
+            for (int j = 0; j < cities.tamanio(); j++) {
+                if (!cities.elemento(j).equals(camino.elemento(i)) && !res.incluye(camino.elemento(i))) {
+                    res.agregarFinal(camino.elemento(i));
+                }
+            }
+        }
+        return camino;
     }
 }
