@@ -72,75 +72,100 @@ public class Mapa {
     // return res;
     // }
 
-    public ListaGenerica<String> devolverCamino(String city1, String city2) {
-        ListaGenericaEnlazada<String> res = new ListaGenericaEnlazada<String>();
-        boolean[] marca = new boolean[this.getMapaCiudades().listaDeVertices().tamanio()];
-        ListaGenerica<Vertice<String>> aux1 = this.getMapaCiudades().listaDeVertices();
-        aux1.comenzar();
-        Vertice<String> aux2 = aux1.proximo();
-        while (!aux1.fin() && !(aux2.dato().equals(city1))) {
-            aux2 = aux1.proximo();
+    // IMPLEMENTACION DE LA CATEDRA PARA DEVOLVER CAMINO
+    public ListaGenerica<String> devolverCaminoC(String origen, String destino) {
+        Vertice<String> vIni = null;
+        Vertice<String> vFin = null;
+        Grafo<String> aux = this.getMapaCiudades();
+        boolean[] visitados = new boolean[aux.listaDeVertices().tamanio()];
+        ListaGenerica<String> camino = new ListaGenericaEnlazada<String>();
+        if (aux != null && !aux.esVacio()) {
+            ListaGenerica<Vertice<String>> vertices = aux.listaDeVertices();
+            vertices.comenzar();
+            while (!vertices.fin()) {
+                Vertice<String> vAux = vertices.proximo();
+                if (vAux.dato().equals(origen))
+                    vIni = vAux;
+                if (vAux.dato().equals(destino))
+                    vFin = vAux;
+            }
+            ListaGenerica<String> caminoAct = new ListaGenericaEnlazada<String>();
+            if (vIni != null && vFin != null)
+                dfsCamino(aux, vIni, vFin, caminoAct, camino, visitados);
         }
-        int i = aux2.posicion();
-        if (i < marca.length)
-            devolverCamino(i, this.getMapaCiudades(), res, marca, city2);
-        return res;
+        return camino;
     }
 
-    private boolean devolverCamino(int i, Grafo<String> grafo,
-            ListaGenericaEnlazada<String> lis, boolean[] marca,
-            String city2) {
-        marca[i] = true;
-        Vertice<String> v = grafo.listaDeVertices().elemento(i);
-        if (v.dato().equals(city2)) {
-            lis.agregarFinal(v.dato());
-            return true;
+    private void dfsCamino(Grafo<String> grafo, Vertice<String> vact, Vertice<String> vfin,
+            ListaGenerica<String> caminoAct, ListaGenerica<String> camino, boolean[] marca) {
+        caminoAct.agregarFinal(vact.dato());
+        marca[vact.posicion()] = true;
+        if (vact == vfin) {
+            if (camino.esVacia() || camino.tamanio() > caminoAct.tamanio())
+                copiarLista(caminoAct, camino);
+        } else {
+            ListaGenerica<Arista<String>> ady = grafo.listaDeAdyacentes(vact);
+            ady.comenzar();
+            while (!ady.fin()) {
+                Vertice<String> vaux = ady.proximo().verticeDestino();
+                if (!marca[vaux.posicion()])
+                    dfsCamino(grafo, vaux, vfin, caminoAct, camino, marca);
+            }
         }
-        ListaGenerica<Arista<String>> ady = grafo.listaDeAdyacentes(v);
-        ady.comenzar();
-        while (!ady.fin()) {
-            int j = ady.proximo().verticeDestino().posicion();
-            if (!marca[j])
-                if (!this.devolverCamino(j, grafo, lis, marca, city2))
-                    lis.agregarInicio(v.dato());
+    }
+
+    public void copiarLista(ListaGenerica<String> origen, ListaGenerica<String> dest) {
+        while (!dest.esVacia()) {
+            dest.eliminarEn(0);
         }
-        return false;
+        origen.comenzar();
+        while (!origen.fin()) {
+            dest.agregarFinal(origen.proximo());
+        }
     }
 
     public ListaGenerica<String> devolverCaminoExceptuando(String city1, String city2, ListaGenerica<String> cities) {
         ListaGenericaEnlazada<String> res = new ListaGenericaEnlazada<String>();
-        boolean[] marca = new boolean[this.getMapaCiudades().listaDeVertices().tamanio()];
-        ListaGenerica<Vertice<String>> aux1 = this.getMapaCiudades().listaDeVertices();
-        aux1.comenzar();
-        Vertice<String> aux2 = aux1.proximo();
-        while (!aux1.fin() && !(aux2.dato().equals(city1))) {
-            aux2 = aux1.proximo();
-        }
-        int j = aux2.posicion();
+        Grafo<String> aux = this.getMapaCiudades();
+        boolean[] marca = new boolean[aux.listaDeVertices().tamanio()];
 
-        for (int i = 0; i < cities.tamanio(); i++) {
-            this.dceRecu(j, this.getMapaCiudades(), marca, res, cities.elemento(i));
+        Vertice<String> vIni = null;
+        Vertice<String> vFin = null;
+
+        if (aux != null && !aux.esVacio()) {
+            ListaGenerica<Vertice<String>> vertices = aux.listaDeVertices();
+            vertices.comenzar();
+            while (!vertices.fin()) {
+                Vertice<String> vAux = vertices.proximo();
+                if (vAux.dato().equals(city1))
+                    vIni = vAux;
+                if (vAux.dato().equals(city2))
+                    vFin = vAux;
+            }
+            ListaGenerica<String> caminoAct = new ListaGenericaEnlazada<String>();
+            if (vIni != null && vFin != null)
+                dfsCaminoEx(this.getMapaCiudades(), vIni, vFin, caminoAct, res, marca, cities);
         }
+
         return res;
     }
 
-    private boolean dceRecu(int i, Grafo<String> grafo, boolean[] marca, ListaGenericaEnlazada<String> lis,
-            String cities) {
-        marca[i] = true;
-        Vertice<String> v = grafo.listaDeVertices().elemento(i);
-        if (v.dato().equals(cities) && !lis.incluye(v.dato())) {
-            // lis.agregarFinal(v.dato());
-            return true;
-        }
-        ListaGenerica<Arista<String>> ady = grafo.listaDeAdyacentes(v);
-        ady.comenzar();
-        while (!ady.fin()) {
-            int j = ady.proximo().verticeDestino().posicion();
-            if (!marca[j]) {
-                if (!this.dceRecu(j, grafo, marca, lis, cities) && !lis.incluye(v.dato()))
-                    lis.agregarInicio(v.dato());
+    private void dfsCaminoEx(Grafo<String> grafo, Vertice<String> vact, Vertice<String> vfin,
+            ListaGenerica<String> caminoAct, ListaGenerica<String> camino, boolean[] marca, ListaGenerica<String> ex) {
+        marca[vact.posicion()] = true;
+        caminoAct.agregarFinal(vact.dato());
+        if (vact == vfin ^ ex.incluye(vact.dato())) {
+            if (camino.esVacia() || camino.tamanio() > caminoAct.tamanio())
+                copiarLista(caminoAct, camino);
+        } else {
+            ListaGenerica<Arista<String>> ady = grafo.listaDeAdyacentes(vact);
+            ady.comenzar();
+            while (!ady.fin()) {
+                Vertice<String> vaux = ady.proximo().verticeDestino();
+                if (!marca[vaux.posicion()])
+                    dfsCaminoEx(grafo, vaux, vfin, caminoAct, camino, marca, ex);
             }
         }
-        return false;
     }
+
 }
