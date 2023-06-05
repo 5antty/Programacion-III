@@ -142,30 +142,178 @@ public class Mapa {
                 if (vAux.dato().equals(city2))
                     vFin = vAux;
             }
-            ListaGenerica<String> caminoAct = new ListaGenericaEnlazada<String>();
             if (vIni != null && vFin != null)
-                dfsCaminoEx(this.getMapaCiudades(), vIni, vFin, caminoAct, res, marca, cities);
+                dfsCaminoEx(this.getMapaCiudades(), vIni, vFin, res, marca, cities);
         }
 
         return res;
     }
 
-    private void dfsCaminoEx(Grafo<String> grafo, Vertice<String> vact, Vertice<String> vfin,
-            ListaGenerica<String> caminoAct, ListaGenerica<String> camino, boolean[] marca, ListaGenerica<String> ex) {
+    private boolean dfsCaminoEx(Grafo<String> grafo, Vertice<String> vact, Vertice<String> vfin,
+            ListaGenerica<String> camino, boolean[] marca, ListaGenerica<String> ex) {
         marca[vact.posicion()] = true;
-        caminoAct.agregarFinal(vact.dato());
-        if (vact == vfin ^ ex.incluye(vact.dato())) {
-            if (camino.esVacia() || camino.tamanio() > caminoAct.tamanio())
-                copiarLista(caminoAct, camino);
+        if (vact == vfin) {
+            camino.agregarFinal(vact.dato());
+            return true;
+        }
+        if (ex.incluye(vact.dato())) {
+            return false;
+        }
+        ListaGenerica<Arista<String>> ady = grafo.listaDeAdyacentes(vact);
+        ady.comenzar();
+        while (!ady.fin()) {
+            Vertice<String> vaux = ady.proximo().verticeDestino();
+            if (!marca[vaux.posicion()])
+                if (dfsCaminoEx(grafo, vaux, vfin, camino, marca, ex)) {
+                    camino.agregarInicio(vact.dato());
+                    return true;
+                }
+        }
+        return false;
+    }
+
+    public ListaGenerica<String> caminoMasCorto(String city1, String city2) {
+        ListaGenerica<String> res = new ListaGenericaEnlazada<>();
+        Grafo<String> aux = this.getMapaCiudades();
+        boolean[] marca = new boolean[aux.listaDeVertices().tamanio()];
+        Vertice<String> vIni = null;
+        Vertice<String> vFin = null;
+        if (aux != null && !aux.esVacio()) {
+            ListaGenerica<Vertice<String>> vertices = aux.listaDeVertices();
+            vertices.comenzar();
+            while (!vertices.fin()) {
+                Vertice<String> vAux = vertices.proximo();
+                if (vAux.dato().equals(city1))
+                    vIni = vAux;
+                if (vAux.dato().equals(city2))
+                    vFin = vAux;
+            }
+            if (vIni != null && vFin != null) {
+                ListaGenerica<String> caminoAct = new ListaGenericaEnlazada<String>();
+                dfsCaminoCorto(this.getMapaCiudades(), vIni, vFin, marca, caminoAct, res);
+            }
+        }
+        return res;
+    }
+
+    private void dfsCaminoCorto(Grafo<String> grafo, Vertice<String> vact, Vertice<String> vfin, boolean[] marca,
+            ListaGenerica<String> aux, ListaGenerica<String> res) {
+        marca[vact.posicion()] = true;
+        aux.agregarFinal(vact.dato());
+        if (vact == vfin) {
+            if (res.esVacia() || aux.tamanio() < res.tamanio())
+                copiarLista(aux, res);
         } else {
             ListaGenerica<Arista<String>> ady = grafo.listaDeAdyacentes(vact);
             ady.comenzar();
             while (!ady.fin()) {
                 Vertice<String> vaux = ady.proximo().verticeDestino();
-                if (!marca[vaux.posicion()])
-                    dfsCaminoEx(grafo, vaux, vfin, caminoAct, camino, marca, ex);
+                if (!marca[vaux.posicion()]) {
+                    dfsCaminoCorto(grafo, vaux, vfin, marca, aux, res);
+                    marca[vaux.posicion()] = false;
+                    aux.eliminarEn(aux.tamanio() - 1);
+                }
             }
         }
     }
 
+    public ListaGenerica<String> caminoSinCargarCombustible(String city1, String city2, int tanque) {
+        ListaGenerica<String> res = new ListaGenericaEnlazada<String>();
+        Grafo<String> aux = this.getMapaCiudades();
+        boolean[] marca = new boolean[aux.listaDeVertices().tamanio()];
+        Vertice<String> vIni = null;
+        Vertice<String> vFin = null;
+        if (aux != null && !aux.esVacio()) {
+            ListaGenerica<Vertice<String>> vertices = aux.listaDeVertices();
+            vertices.comenzar();
+            while (!vertices.fin()) {
+                Vertice<String> vAux = vertices.proximo();
+                if (vAux.dato().equals(city1))
+                    vIni = vAux;
+                if (vAux.dato().equals(city2))
+                    vFin = vAux;
+            }
+            if (vIni != null && vFin != null) {
+                ListaGenerica<String> caminoAct = new ListaGenericaEnlazada<String>();
+                dfsSinCombustible(aux, vIni, vFin, marca, tanque, caminoAct, res);
+            }
+        }
+        return res;
+    }
+
+    private void dfsSinCombustible(Grafo<String> grafo, Vertice<String> vact, Vertice<String> vfin, boolean[] marca,
+            int tanque, ListaGenerica<String> aux, ListaGenerica<String> res) {
+        marca[vact.posicion()] = true;
+        aux.agregarFinal(vact.dato());
+        if (tanque < 0)
+            return;
+        if (vact == vfin) {
+            if (res.esVacia())
+                copiarLista(aux, res);
+        } else {
+            ListaGenerica<Arista<String>> ady = grafo.listaDeAdyacentes(vact);
+            ady.comenzar();
+            while (!ady.fin()) {
+                Arista<String> arista = ady.proximo();
+                Vertice<String> vaux = arista.verticeDestino();
+                if (!marca[vaux.posicion()]) {
+                    dfsSinCombustible(grafo, vaux, vfin, marca, tanque - arista.peso(), aux, res);
+                    marca[vaux.posicion()] = false;
+                    aux.eliminarEn(aux.tamanio() - 1);
+                }
+            }
+        }
+    }
+
+    public ListaGenerica<String> caminoConMenorCargaDeCombustible(String city1, String city2, int tanque) {
+        ListaGenerica<String> res = new ListaGenericaEnlazada<String>();
+        Grafo<String> aux = this.getMapaCiudades();
+        boolean[] marca = new boolean[aux.listaDeVertices().tamanio()];
+        Vertice<String> vIni = null;
+        Vertice<String> vFin = null;
+        if (aux != null && !aux.esVacio()) {
+            ListaGenerica<Vertice<String>> vertices = aux.listaDeVertices();
+            vertices.comenzar();
+            while (!vertices.fin()) {
+                Vertice<String> vAux = vertices.proximo();
+                if (vAux.dato().equals(city1))
+                    vIni = vAux;
+                if (vAux.dato().equals(city2))
+                    vFin = vAux;
+            }
+            if (vIni != null && vFin != null) {
+                Arista<String> ar = aux.listaDeAdyacentes(vIni).elemento(0);
+                ListaGenerica<String> caminoAct = new ListaGenericaEnlazada<String>();
+                dfsCaminoConCarga(aux, vIni, vFin, marca, tanque, tanque - ar.peso(), caminoAct, res);
+            }
+        }
+        return res;
+    }
+
+    private void dfsCaminoConCarga(Grafo<String> grafo, Vertice<String> vact, Vertice<String> vfin, boolean[] marca,
+            int tanque, int tanqueAct, ListaGenerica<String> aux, ListaGenerica<String> res) {
+        marca[vact.posicion()] = true;
+        aux.agregarFinal(vact.dato());
+        if (tanque < 0)
+            return;
+        if (vact == vfin) {
+            if (res.esVacia())
+                copiarLista(aux, res);
+        } else {
+            ListaGenerica<Arista<String>> ady = grafo.listaDeAdyacentes(vact);
+            ady.comenzar();
+            while (!ady.fin()) {
+                Arista<String> arista = ady.proximo();
+                Vertice<String> vaux = arista.verticeDestino();
+                if (!marca[vaux.posicion()]) {
+                    if (tanqueAct - arista.peso() > 0)
+                        dfsCaminoConCarga(grafo, vaux, vfin, marca, tanque, tanqueAct - arista.peso(), aux, res);
+                    else
+                        dfsCaminoConCarga(grafo, vaux, vfin, marca, tanque, tanque - arista.peso(), aux, res);
+                    marca[vaux.posicion()] = false;
+                    aux.eliminarEn(aux.tamanio() - 1);
+                }
+            }
+        }
+    }
 }

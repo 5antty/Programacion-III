@@ -21,15 +21,15 @@ public class TestMapa {
         map.getMapaCiudades().agregarVertice(c4);
         map.getMapaCiudades().agregarVertice(c5);
         map.getMapaCiudades().agregarVertice(c6);
-        map.getMapaCiudades().conectar(c, c1, 0);
-        map.getMapaCiudades().conectar(c, c2, 0);
-        map.getMapaCiudades().conectar(c1, c2, 0);
-        map.getMapaCiudades().conectar(c1, c3, 0);
-        map.getMapaCiudades().conectar(c2, c3, 0);
-        map.getMapaCiudades().conectar(c2, c4, 0);
-        map.getMapaCiudades().conectar(c3, c5, 0);
-        map.getMapaCiudades().conectar(c5, c6, 0);
-        map.getMapaCiudades().conectar(c4, c6, 0);
+        map.getMapaCiudades().conectar(c, c1, 1);
+        map.getMapaCiudades().conectar(c, c2, 1);
+        map.getMapaCiudades().conectar(c1, c2, 1);
+        map.getMapaCiudades().conectar(c1, c3, 1);
+        map.getMapaCiudades().conectar(c2, c3, 1);
+        map.getMapaCiudades().conectar(c2, c4, 1);
+        map.getMapaCiudades().conectar(c3, c5, 1);
+        map.getMapaCiudades().conectar(c5, c6, 1);
+        map.getMapaCiudades().conectar(c4, c6, 1);
 
         ListaGenerica<String> res = map.devolverCaminoC("Caleta", "Lima");
         if (res != null)
@@ -38,8 +38,16 @@ public class TestMapa {
         ListaGenerica<String> exc = new ListaGenericaEnlazada<String>();
         exc.agregarFinal("La Plata");
         exc.agregarFinal("Catamarca");
+        exc.agregarFinal("Comodoro");
 
         res = map.devolverCaminoExceptuando("Caleta", "Lima", exc);
+        if (res != null)
+            System.out.println(res);
+
+        res = map.caminoMasCorto("CABA", "Lima");
+        if (res != null)
+            System.out.println(res);
+        res = map.caminoSinCargarCombustible("Caleta", "Lima", 3);
         if (res != null)
             System.out.println(res);
     }
